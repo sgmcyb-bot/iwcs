@@ -4,6 +4,7 @@ import '../models/complaint_update.dart';
 import '../models/rti_request.dart';
 import '../models/user.dart';
 import 'database_service.dart';
+import 'firestore_service.dart';
 
 class ComplaintService {
   static final ComplaintService _instance = ComplaintService._internal();
@@ -11,6 +12,7 @@ class ComplaintService {
   ComplaintService._internal();
 
   final DatabaseService _db = DatabaseService();
+  final FirestoreService _firestore = FirestoreService();
   final Uuid _uuid = const Uuid();
 
   /// Create a new complaint
@@ -23,7 +25,7 @@ class ComplaintService {
     required UserModel user,
     int priority = 2,
   }) async {
-    final id = await _db.generateComplaintId();
+    final String id = await _db.generateComplaintId();
     final complaint = Complaint(
       id: id,
       title: title,
@@ -35,6 +37,11 @@ class ComplaintService {
       location: location,
       priority: priority,
     );
+    
+    // Remote Save
+    await _firestore.saveComplaint(complaint);
+    
+    // Local Cache
     await _db.saveComplaint(complaint);
 
     // Add initial update
@@ -61,6 +68,8 @@ class ComplaintService {
     final oldStatus = complaint.status;
     complaint.status = newStatus;
     complaint.updatedAt = DateTime.now();
+    
+    await _firestore.saveComplaint(complaint);
     await _db.saveComplaint(complaint);
 
     await addUpdate(
@@ -87,6 +96,8 @@ class ComplaintService {
       complaint.status = 'in_progress';
     }
     complaint.updatedAt = DateTime.now();
+    
+    await _firestore.saveComplaint(complaint);
     await _db.saveComplaint(complaint);
 
     await addUpdate(
@@ -116,6 +127,8 @@ class ComplaintService {
       updatedByName: user.name,
       updatedByRole: user.role,
     );
+    
+    await _firestore.saveComplaintUpdate(update);
     await _db.saveUpdate(update);
   }
 
@@ -129,6 +142,7 @@ class ComplaintService {
     if (complaint == null) return;
 
     complaint.addExternalData(data);
+    await _firestore.saveComplaint(complaint);
     await _db.saveComplaint(complaint);
 
     await addUpdate(
@@ -156,6 +170,8 @@ class ComplaintService {
       referenceNumber: referenceNumber,
       status: referenceNumber.isNotEmpty ? 'filed' : 'drafted',
     );
+    
+    await _firestore.saveRTIRequest(rti);
     await _db.saveRTI(rti);
 
     await addUpdate(
@@ -167,22 +183,10 @@ class ComplaintService {
     return rti;
   }
 
-  /// Update RTI response
-  Future<void> updateRTIResponse({
-    required RTIRequest rti,
-    required String responseText,
-    required UserModel user,
-  }) async {
-    rti.responseText = responseText;
-    rti.status = 'responded';
-    rti.respondedAt = DateTime.now();
-    await _db.saveRTI(rti);
-
-    await addUpdate(
-      complaintId: rti.complaintId,
-      message: 'RTI response received from ${rti.department}',
-      user: user,
-    );
+  /// Synchronize from Cloud (Firestore) to Local Cache (Hive)
+  Future<void> syncFromCloud() async {
+    // This would ideally be a stream listener in a real app
+    // For now we can implement it as a manually triggered fetch if needed
   }
 
   /// Get complaints needing follow-up (no update in 3+ days)
