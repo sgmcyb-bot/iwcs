@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 300),
                 child: Text(
-                  'IWC',
+                  'IWCS',
                   style: GoogleFonts.outfit(
                     fontSize: 48,
                     fontWeight: FontWeight.w800,

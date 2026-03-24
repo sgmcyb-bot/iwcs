@@ -147,6 +147,44 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
                 const SizedBox(height: 32),
+                FadeInUp(
+                  duration: const Duration(milliseconds: 800),
+                  delay: const Duration(milliseconds: 600),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'QUICK ACCESS (DEMO)',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white.withValues(alpha: 0.4),
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            _quickLoginButton('ADMIN', 'admin@iwc.org', 'admin123', Colors.amber),
+                            const SizedBox(width: 8),
+                            _quickLoginButton('VOLUNTEER', 'volunteer@iwc.org', 'volunteer123', Colors.cyanAccent),
+                            const SizedBox(width: 8),
+                            _quickLoginButton('PUBLIC', 'public@iwc.org', 'public123', Colors.white),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
                 Center(
                   child: TextButton(
                     onPressed: () => setState(() => _isLogin = !_isLogin),
@@ -156,8 +194,38 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _quickLoginButton(String label, String email, String password, Color color) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          _emailController.text = email;
+          _passwordController.text = password;
+          _handleAuth();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: color.withValues(alpha: 0.9),
+              ),
             ),
           ),
         ),
