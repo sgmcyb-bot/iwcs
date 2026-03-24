@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "459067636597",
+    "project_id": "iwcs-c8167",
+    "storage_bucket": "iwcs-c8167.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459067636597:android:d5baf92308fd72022ef13c",
+        "android_client_info": {
+          "package_name": "com.iwcngo.iwcs_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWpvi97kVx6ppSw3j6a6k14u-jTBHfWAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
